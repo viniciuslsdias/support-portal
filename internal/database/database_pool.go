@@ -16,7 +16,7 @@ type key int
 
 const (
 	DatabasePoolContextKeyID     key = iota + 100
-	appName                          = "mediassist-core"
+	appName                          = "support-portal"
 	ErrorCodeDuplicatePrimaryKey     = "23505"
 )
 
