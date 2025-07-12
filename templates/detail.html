@@ -37,14 +37,14 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Full Name</label>
-                                    <p class="form-control-plaintext">{{.FullName}}</p>
+                                    <p class="form-control-plaintext">{{.FullName.String}}</p>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Email Address</label>
                                     <p class="form-control-plaintext">
-                                        <a href="mailto:{{.Email}}">{{.Email}}</a>
+                                        <a href="mailto:{{.EmailAddress.String}}">{{.EmailAddress.String}}</a>
                                     </p>
                                 </div>
                             </div>
@@ -56,11 +56,11 @@
                                     <label class="form-label fw-bold">Category</label>
                                     <p class="form-control-plaintext">
                                         <span class="badge 
-                                            {{if eq .Category "Software"}}bg-info
-                                            {{else if eq .Category "Hardware"}}bg-warning
-                                            {{else if eq .Category "Login"}}bg-success
+                                            {{if eq .IssueCategory "software"}}bg-info
+                                            {{else if eq .IssueCategory "hardware"}}bg-warning
+                                            {{else if eq .IssueCategory "login"}}bg-success
                                             {{else}}bg-secondary{{end}} fs-6">
-                                            {{.Category}}
+                                            {{.IssueCategory}}
                                         </span>
                                     </p>
                                 </div>
@@ -70,9 +70,9 @@
                                     <label class="form-label fw-bold">Priority</label>
                                     <p class="form-control-plaintext">
                                         <span class="badge 
-                                            {{if eq .Priority "Critical"}}bg-danger
-                                            {{else if eq .Priority "High"}}bg-warning
-                                            {{else if eq .Priority "Medium"}}bg-info
+                                            {{if eq .Priority "critical"}}bg-danger
+                                            {{else if eq .Priority "high"}}bg-warning
+                                            {{else if eq .Priority "medium"}}bg-info
                                             {{else}}bg-success{{end}} fs-6">
                                             {{.Priority}}
                                         </span>
@@ -83,13 +83,13 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-bold">Issue Summary</label>
-                            <p class="form-control-plaintext">{{.Summary}}</p>
+                            <p class="form-control-plaintext">{{.IssueSummary.String}}</p>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label fw-bold">Detailed Description</label>
                             <div class="border rounded p-3 bg-light">
-                                <p class="mb-0" style="white-space: pre-wrap;">{{.Description}}</p>
+                                <p class="mb-0" style="white-space: pre-wrap;">{{.DetailedDescription.String}}</p>
                             </div>
                         </div>
 
