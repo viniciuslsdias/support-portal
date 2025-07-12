@@ -22,10 +22,9 @@ jobs:
       #   run: DOCKER_BUILDKIT=1 docker build -t "support-portal:${{ steps.vars.outputs.sha_short }}" -f Dockerfile .
 
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v1.7.0
+        uses: aws-actions/configure-aws-credentials@v4.1.0
         with:
           role-to-assume: arn:aws:iam::194302643587:role/github_role
-          role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Sts GetCallerIdentity
