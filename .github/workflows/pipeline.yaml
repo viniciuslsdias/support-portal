@@ -11,28 +11,32 @@ jobs:
   build-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Git clone the repository
-        uses: actions/checkout@v4
+      # - name: Git clone the repository
+      #   uses: actions/checkout@v4
 
-      - name: Set Short Sha Variable
-        id: vars
-        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      # - name: Set Short Sha Variable
+      #   id: vars
+      #   run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
 
-      - name: Build
-        run: DOCKER_BUILDKIT=1 docker build -t "support-portal:${{ steps.vars.outputs.sha_short }}" -f Dockerfile .
+      # - name: Build
+      #   run: DOCKER_BUILDKIT=1 docker build -t "support-portal:${{ steps.vars.outputs.sha_short }}" -f Dockerfile .
 
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
+        uses: aws-actions/configure-aws-credentials@v1.7.0
         with:
           role-to-assume: arn:aws:iam::194302643587:role/github_role
-          role-session-name: rolesession
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: AWS ECR Login
-        run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 194302643587.dkr.ecr.us-east-1.amazonaws.com
+      - name: Sts GetCallerIdentity
+        run: |
+          aws sts get-caller-identity
 
-      - name: Tag Docker Image
-        run: docker tag "support-portal:${{ steps.vars.outputs.sha_short }}" "194302643587.dkr.ecr.us-east-1.amazonaws.com/support-portal:${{ steps.vars.outputs.sha_short }}"
+      # - name: AWS ECR Login
+      #   run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 194302643587.dkr.ecr.us-east-1.amazonaws.com
+
+      # - name: Tag Docker Image
+      #   run: docker tag "support-portal:${{ steps.vars.outputs.sha_short }}" "194302643587.dkr.ecr.us-east-1.amazonaws.com/support-portal:${{ steps.vars.outputs.sha_short }}"
       
-      - name: Push Docker Image
-        run: docker push "194302643587.dkr.ecr.us-east-1.amazonaws.com/support-portal:${{ steps.vars.outputs.sha_short }}"
+      # - name: Push Docker Image
+      #   run: docker push "194302643587.dkr.ecr.us-east-1.amazonaws.com/support-portal:${{ steps.vars.outputs.sha_short }}"
