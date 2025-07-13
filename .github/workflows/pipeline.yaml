@@ -11,21 +11,18 @@ jobs:
   build-deploy:
     runs-on: ubuntu-latest
     steps:
-      # - name: Git clone the repository
-      #   uses: actions/checkout@v4
+      - name: Git clone the repository
+        uses: actions/checkout@v4
 
-      # - name: Set Short Sha Variable
-      #   id: vars
-      #   run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      - name: Set Short Sha Variable
+        id: vars
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
 
-      # - name: Build
-      #   run: DOCKER_BUILDKIT=1 docker build -t "support-portal:${{ steps.vars.outputs.sha_short }}" -f Dockerfile .
+      - name: Build App
+        run: DOCKER_BUILDKIT=1 docker build -t "support-portal:${{ steps.vars.outputs.sha_short }}" -f Dockerfile-app .
 
-      - name: Print OIDC Token Claims
-        run: |
-          TOKEN=$(curl -sH "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-              "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com" | jq -r .value)
-          echo "$TOKEN" | cut -d '.' -f2 | base64 -d | jq
+      - name: Build Migrations
+        run: DOCKER_BUILDKIT=1 docker build -t "support-portal:${{ steps.vars.outputs.sha_short }}-migrations" -f Dockerfile-migrations .
 
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4.1.0
@@ -33,15 +30,17 @@ jobs:
           role-to-assume: arn:aws:iam::194302643587:role/github_role
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Sts GetCallerIdentity
-        run: |
-          aws sts get-caller-identity
+      - name: AWS ECR Login
+        run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 194302643587.dkr.ecr.us-east-1.amazonaws.com
 
-      # - name: AWS ECR Login
-      #   run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 194302643587.dkr.ecr.us-east-1.amazonaws.com
-
-      # - name: Tag Docker Image
-      #   run: docker tag "support-portal:${{ steps.vars.outputs.sha_short }}" "194302643587.dkr.ecr.us-east-1.amazonaws.com/support-portal:${{ steps.vars.outputs.sha_short }}"
+      - name: Tag App Docker Image
+        run: docker tag "support-portal:${{ steps.vars.outputs.sha_short }}" "194302643587.dkr.ecr.us-east-1.amazonaws.com/support-portal:${{ steps.vars.outputs.sha_short }}"
       
-      # - name: Push Docker Image
-      #   run: docker push "194302643587.dkr.ecr.us-east-1.amazonaws.com/support-portal:${{ steps.vars.outputs.sha_short }}"
+      - name: Push App Docker Image
+        run: docker push "194302643587.dkr.ecr.us-east-1.amazonaws.com/support-portal:${{ steps.vars.outputs.sha_short }}"
+
+      - name: Tag Migrations Docker Image
+        run: docker tag "support-portal:${{ steps.vars.outputs.sha_short }}-migrations" "194302643587.dkr.ecr.us-east-1.amazonaws.com/support-portal:${{ steps.vars.outputs.sha_short }}-migrations"
+      
+      - name: Push Migrations Docker Image
+        run: docker push "194302643587.dkr.ecr.us-east-1.amazonaws.com/support-portal:${{ steps.vars.outputs.sha_short }}-migrations"

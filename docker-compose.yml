@@ -30,7 +30,9 @@ services:
       - app-network
 
   support-portal:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile-app
     depends_on:
       postgres:
         condition: service_healthy
