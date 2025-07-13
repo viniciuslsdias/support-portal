@@ -6,16 +6,18 @@ INSERT INTO tickets (
     issue_category, 
     priority, 
     issue_summary, 
-    detailed_description, 
+    detailed_description,
+    department,
     created_at, 
     updated_at
 ) VALUES (
-    $1, 
-    $2, 
+    $1,
+    $2,
     $3,
     $4,
-    $5, 
-    $6, 
+    $5,
+    $6,
+    $7,
     now(), 
     now()
 );

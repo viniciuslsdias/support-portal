@@ -55,6 +55,58 @@ func (ns NullCategories) Value() (driver.Value, error) {
 	return string(ns.Categories), nil
 }
 
+type Departments string
+
+const (
+	DepartmentsEngineering       Departments = "Engineering"
+	DepartmentsMarketing         Departments = "Marketing"
+	DepartmentsSales             Departments = "Sales"
+	DepartmentsHumanResources    Departments = "Human Resources"
+	DepartmentsFinance           Departments = "Finance"
+	DepartmentsOperations        Departments = "Operations"
+	DepartmentsCustomerSupport   Departments = "Customer Support"
+	DepartmentsProductManagement Departments = "Product Management"
+	DepartmentsQualityAssurance  Departments = "Quality Assurance"
+	DepartmentsITInfrastructure  Departments = "IT/Infrastructure"
+	DepartmentsLegal             Departments = "Legal"
+	DepartmentsOther             Departments = "Other"
+)
+
+func (e *Departments) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = Departments(s)
+	case string:
+		*e = Departments(s)
+	default:
+		return fmt.Errorf("unsupported scan type for Departments: %T", src)
+	}
+	return nil
+}
+
+type NullDepartments struct {
+	Departments Departments
+	Valid       bool // Valid is true if Departments is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullDepartments) Scan(value interface{}) error {
+	if value == nil {
+		ns.Departments, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.Departments.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullDepartments) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.Departments), nil
+}
+
 type Priorities string
 
 const (
@@ -109,4 +161,5 @@ type Ticket struct {
 	DetailedDescription sql.NullString
 	CreatedAt           time.Time
 	UpdatedAt           time.Time
+	Department          Departments
 }
