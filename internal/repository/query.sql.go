@@ -18,16 +18,18 @@ INSERT INTO tickets (
     issue_category, 
     priority, 
     issue_summary, 
-    detailed_description, 
+    detailed_description,
+    department,
     created_at, 
     updated_at
 ) VALUES (
-    $1, 
-    $2, 
+    $1,
+    $2,
     $3,
     $4,
-    $5, 
-    $6, 
+    $5,
+    $6,
+    $7,
     now(), 
     now()
 )
@@ -40,6 +42,7 @@ type CreateTicketParams struct {
 	Priority            Priorities
 	IssueSummary        sql.NullString
 	DetailedDescription sql.NullString
+	Department          Departments
 }
 
 func (q *Queries) CreateTicket(ctx context.Context, arg CreateTicketParams) error {
@@ -50,12 +53,13 @@ func (q *Queries) CreateTicket(ctx context.Context, arg CreateTicketParams) erro
 		arg.Priority,
 		arg.IssueSummary,
 		arg.DetailedDescription,
+		arg.Department,
 	)
 	return err
 }
 
 const getAllTickets = `-- name: GetAllTickets :many
-SELECT id, full_name, email_address, issue_category, priority, issue_summary, detailed_description, created_at, updated_at FROM tickets
+SELECT id, full_name, email_address, issue_category, priority, issue_summary, detailed_description, created_at, updated_at, department FROM tickets
 `
 
 func (q *Queries) GetAllTickets(ctx context.Context) ([]Ticket, error) {
@@ -77,6 +81,7 @@ func (q *Queries) GetAllTickets(ctx context.Context) ([]Ticket, error) {
 			&i.DetailedDescription,
 			&i.CreatedAt,
 			&i.UpdatedAt,
+			&i.Department,
 		); err != nil {
 			return nil, err
 		}
@@ -89,7 +94,7 @@ func (q *Queries) GetAllTickets(ctx context.Context) ([]Ticket, error) {
 }
 
 const getTicket = `-- name: GetTicket :one
-SELECT id, full_name, email_address, issue_category, priority, issue_summary, detailed_description, created_at, updated_at FROM tickets 
+SELECT id, full_name, email_address, issue_category, priority, issue_summary, detailed_description, created_at, updated_at, department FROM tickets 
 WHERE id = $1
 `
 
@@ -106,6 +111,7 @@ func (q *Queries) GetTicket(ctx context.Context, id int64) (Ticket, error) {
 		&i.DetailedDescription,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.Department,
 	)
 	return i, err
 }

@@ -48,6 +48,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 			Priority:            repository.Priorities(strings.ToLower(r.FormValue("priority"))),
 			IssueSummary:        sql.NullString{r.FormValue("summary"), true},
 			DetailedDescription: sql.NullString{r.FormValue("description"), true},
+			Department:          repository.Departments(r.FormValue("department")),
 		})
 
 		// Redirect to tickets page

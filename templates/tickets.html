@@ -38,6 +38,7 @@
                                         <th scope="col">#</th>
                                         <th scope="col">Full Name</th>
                                         <th scope="col">Email</th>
+                                        <th scope="col">Department</th>
                                         <th scope="col">Category</th>
                                         <th scope="col">Priority</th>
                                         <th scope="col">Summary</th>
@@ -51,6 +52,9 @@
                                         <td><span class="badge bg-secondary">{{.ID}}</span></td>
                                         <td>{{.FullName.String}}</td>
                                         <td>{{.EmailAddress.String}}</td>
+                                        <td>
+                                            <span class="badge bg-primary">{{.Department}}</span>
+                                        </td>
                                         <td>
                                             <span class="badge 
                                                 {{if eq .IssueCategory "software"}}bg-info
